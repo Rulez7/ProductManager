@@ -135,8 +135,6 @@ namespace ProductManager
 
                     AddInfoForEditArticle(article);
 
-                    //TestEditArticle(article);
-
                     break;
             }
         }
@@ -156,9 +154,9 @@ namespace ProductManager
             do
             {
                 Console.WriteLine("Article number: " + article.Number);
-                Console.WriteLine("Name: ");
-                Console.WriteLine("Description: ");
-                Console.WriteLine("Price: ");
+                Console.WriteLine("          Name: ");
+                Console.WriteLine("   Description: ");
+                Console.WriteLine("         Price: ");
 
                 Console.SetCursorPosition(16, 1);
                 name = Console.ReadLine();
@@ -208,26 +206,6 @@ namespace ProductManager
             } while (editingArticle);
 
             MainMenu();
-        }
-
-        private static void TestEditArticle(Article article)
-        {
-            var sql = $@"
-                UPDATE Article
-                SET Name='Mössa', Description='Fin mössa', Price='299'
-                WHERE Id=(@Id)";
-
-            SqlConnection connection = new SqlConnection(connectionString);
-
-            SqlCommand command = new SqlCommand(sql, connection);
-
-            command.Parameters.AddWithValue("@Id", article.Id);
-
-            connection.Open();
-
-            command.ExecuteNonQuery();
-
-            connection.Close();
         }
 
         private static void EditArticle(Article article)
@@ -325,9 +303,9 @@ namespace ProductManager
             do
             {
                 Console.WriteLine("Article number: ");
-                Console.WriteLine("Name: ");
-                Console.WriteLine("Description: ");
-                Console.WriteLine("Price: ");
+                Console.WriteLine("          Name: ");
+                Console.WriteLine("   Description: ");
+                Console.WriteLine("         Price: ");
 
                 Console.SetCursorPosition(16, 0);
                 number = Console.ReadLine();
