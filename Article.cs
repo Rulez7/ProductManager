@@ -75,5 +75,10 @@ namespace ProductManager
         }
 
         public int Price { get; }
+
+        public override string ToString()
+        {
+            return $"{Id}   {Name}";
+        }
     }
 }
