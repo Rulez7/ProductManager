@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ProductManager
+﻿
+namespace ProductManager.Models
 {
     class Category
     {
@@ -19,11 +16,11 @@ namespace ProductManager
             AmountOfProducts = amountOfProducts;
         }
 
-        public int Id { get; }
+        public int Id { get; protected set; }
 
-        public string Name { get; }
+        public string Name { get; protected set; }
 
-        public int AmountOfProducts { get; }
+        public int AmountOfProducts { get; protected set; }
 
         public override string ToString()
         {

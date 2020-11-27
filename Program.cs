@@ -1,13 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using ProductManager.Data;
+using ProductManager.Models;
 
 namespace ProductManager
 {
     class Program
     {
         static string connectionString = "Server=localhost;Database=ProductManager;Integrated Security=True";
+
+        static ProductManagerContext Context = new ProductManagerContext();
+
+        static List<Article> articleList = Context.Articles.ToList();
+
+        static List<Category> categoryList = Context.Categories.ToList();
 
         static void Main(string[] args)
         {
@@ -133,7 +143,7 @@ namespace ProductManager
             Console.WriteLine("ID  Category                                         Total products");
             Console.WriteLine("-------------------------------------------------------------------");
 
-            foreach (Category category in FetchCategories())
+            foreach (Category category in categoryList)
             {
                 Console.SetCursorPosition(0, posX);
                 Console.WriteLine(category.Id);
@@ -163,7 +173,7 @@ namespace ProductManager
             Category parentCategory = null;
             Category childCategory = null;
 
-            foreach (Category category in FetchCategories())
+            foreach (Category category in categoryList)
             {
                 if (selectedParentId == category.Id)
                 {
@@ -171,7 +181,7 @@ namespace ProductManager
                 }
             }
 
-            foreach (Category category in FetchCategories())
+            foreach (Category category in categoryList)
             {
                 if (selectedChildId == category.Id)
                 {
@@ -235,7 +245,7 @@ namespace ProductManager
             Console.WriteLine("ID  Category                                         Total products");
             Console.WriteLine("-------------------------------------------------------------------");
 
-            foreach (Category category in FetchCategories())
+            foreach (Category category in categoryList)
             {
                 Console.SetCursorPosition(0, posX);
                 Console.WriteLine(category.Id);
@@ -253,7 +263,7 @@ namespace ProductManager
 
             Console.Clear();
 
-            foreach (Category category in FetchCategories())
+            foreach (Category category in categoryList)
             {
                 if (category.Id == selectedCategoryId)
                 {
@@ -317,7 +327,7 @@ namespace ProductManager
 
             Console.Clear();
 
-            foreach (Article article in FetchArticles())
+            foreach (Article article in articleList)
             {
                 if (article.Name.Contains(searchProduct))
                 {
@@ -339,7 +349,7 @@ namespace ProductManager
             Console.WriteLine("ID  Name");
             Console.WriteLine("----------------------------------------------------------------");
 
-            foreach (Article article in FetchArticles())
+            foreach (Article article in articleList)
             {
                 if (article.Name.Contains(searchProduct))
                 {
@@ -356,7 +366,7 @@ namespace ProductManager
 
             Console.Clear();
 
-            foreach (Article article in FetchArticles())
+            foreach (Article article in articleList)
             {
                 if (article.Id == selectedProductId)
                 {
@@ -406,7 +416,7 @@ namespace ProductManager
             Console.WriteLine("Category                                         Total products");
             Console.WriteLine("---------------------------------------------------------------");
 
-            foreach (Category category in FetchCategories())
+            foreach (Category category in categoryList)
             {
                 Console.WriteLine(category);
             }
@@ -458,7 +468,7 @@ namespace ProductManager
 
                     if (inputYorN.Key == ConsoleKey.Y)
                     {
-                        foreach (Category item in FetchCategories())
+                        foreach (Category item in categoryList)
                         {
                             if (item.Name == category.Name)
                             {
@@ -501,52 +511,9 @@ namespace ProductManager
 
         private static void InsertCategory(Category category)
         {
-            var sql = $@"
-            INSERT INTO Categories (Name, AmountOfProducts)
-            VALUES (@Name, @AmountOfProducts)";
+            Context.Categories.Add(category);
 
-            SqlConnection connection = new SqlConnection(connectionString);
-
-            SqlCommand command = new SqlCommand(sql, connection);
-
-            command.Parameters.AddWithValue("@Name", category.Name);
-            command.Parameters.AddWithValue("@AmountOfProducts", category.AmountOfProducts);
-
-            connection.Open();
-
-            command.ExecuteNonQuery();
-
-            connection.Close();
-        }
-
-        private static List<Category> FetchCategories()
-        {
-            string sql = "SELECT Id, Name, AmountOfProducts FROM Categories";
-
-            List<Category> categoryList = new List<Category>();
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                using (SqlCommand command = new SqlCommand(sql, connection))
-                {
-                    connection.Open();
-
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        var id = (int)reader["Id"];
-                        var name = (string)reader["Name"];
-                        var amountOfProducts = (int)reader["AmountOfProducts"];
-
-                        categoryList.Add(new Category(id, name, amountOfProducts));
-                    }
-
-                    connection.Close();
-                }
-            }
-
-            return categoryList;
+            Context.SaveChanges();
         }
 
         private static void ArticleMenu()
@@ -605,15 +572,12 @@ namespace ProductManager
 
             Console.Clear();
 
-            foreach (Article article in FetchArticles())
-            {
-                if (article.Number == input)
-                {
-                    ShowArticleInfo(article);
-                }
-            }
+            Article article = FindArticle(input);
 
-            Console.Clear();
+            if (article != null)
+            {
+                ShowArticleInfo(article);
+            }
 
             Console.WriteLine("Unit not found");
 
@@ -745,25 +709,31 @@ namespace ProductManager
 
         private static void EditArticle(Article article)
         {
-            var sql = $@"
-                UPDATE Articles
-                SET Name=@Name, Description=@Description, Price=@Price
-                WHERE Number=@Number";
+            Context.Articles.Attach(article);
 
-            SqlConnection connection = new SqlConnection(connectionString);
+            Context.Entry(article).State = EntityState.Modified;
 
-            SqlCommand command = new SqlCommand(sql, connection);
-            
-            command.Parameters.AddWithValue("@Name", article.Name);
-            command.Parameters.AddWithValue("@Description", article.Description);
-            command.Parameters.AddWithValue("@Price", article.Price);
-            command.Parameters.AddWithValue("@Number", article.Number);
+            Context.SaveChanges();
 
-            connection.Open();
+            //var sql = $@"
+            //    UPDATE Articles
+            //    SET Name=@Name, Description=@Description, Price=@Price
+            //    WHERE Number=@Number";
 
-            command.ExecuteNonQuery();
+            //SqlConnection connection = new SqlConnection(connectionString);
 
-            connection.Close();
+            //SqlCommand command = new SqlCommand(sql, connection);
+
+            //command.Parameters.AddWithValue("@Name", article.Name);
+            //command.Parameters.AddWithValue("@Description", article.Description);
+            //command.Parameters.AddWithValue("@Price", article.Price);
+            //command.Parameters.AddWithValue("@Number", article.Number);
+
+            //connection.Open();
+
+            //command.ExecuteNonQuery();
+
+            //connection.Close();
         }
 
         private static void AskForDeleteArticle(Article article)
@@ -869,7 +839,7 @@ namespace ProductManager
 
                     if (inputYorN.Key == ConsoleKey.Y)
                     {
-                        foreach (Article item in FetchArticles())
+                        foreach (Article item in articleList)
                         {
                             if (item.Number == article.Number)
                             {
@@ -910,58 +880,18 @@ namespace ProductManager
             MainMenu();
         }
 
-        private static List<Article> FetchArticles()
+        private static Article FindArticle(string number)
         {
-            string sql = "SELECT Id, Number, Name, Description, Price FROM Articles";
+            Article article = Context.Articles.FirstOrDefault(x => x.Number == number);
 
-            List<Article> articleList = new List<Article>();
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                using (SqlCommand command = new SqlCommand(sql, connection))
-                {
-                    connection.Open();
-
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        var id = (int)reader["Id"];
-                        var number = (string)reader["Number"];
-                        var name = (string)reader["Name"];
-                        var description = (string)reader["Description"];
-                        var price = (int)reader["Price"];
-
-                        articleList.Add(new Article(id, number, name, description, price));
-                    }
-
-                    connection.Close();
-                }
-            }
-
-            return articleList;
+            return article;
         }
 
         private static void InsertArticle(Article article)
         {
-            var sql = $@"
-            INSERT INTO Articles (Number, Name, Description, Price)
-            VALUES (@Number, @Name, @Description, @Price)";
+            Context.Articles.Add(article);
 
-            SqlConnection connection = new SqlConnection(connectionString);
-
-            SqlCommand command = new SqlCommand(sql, connection);
-
-            command.Parameters.AddWithValue("@Number", article.Number);
-            command.Parameters.AddWithValue("@Name", article.Name);
-            command.Parameters.AddWithValue("@Description", article.Description);
-            command.Parameters.AddWithValue("@Price", article.Price);
-
-            connection.Open();
-
-            command.ExecuteNonQuery();
-
-            connection.Close();
+            Context.SaveChanges();
         }
     }
 }

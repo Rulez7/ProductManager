@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProductManager
+namespace ProductManager.Models
 {
     class Article
     {
@@ -21,7 +21,7 @@ namespace ProductManager
             Price = price;
         }
 
-        public int Id { get; }
+        public int Id { get; protected set; }
 
         private string number;
 
@@ -29,7 +29,7 @@ namespace ProductManager
         {
             get { return number; }
 
-            private set
+            protected set
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
@@ -46,7 +46,7 @@ namespace ProductManager
         {
             get { return name; }
 
-            private set
+            protected set
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
@@ -63,7 +63,7 @@ namespace ProductManager
         {
             get { return description; }
 
-            private set
+            protected set
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
@@ -74,7 +74,7 @@ namespace ProductManager
             }
         }
 
-        public int Price { get; }
+        public int Price { get; protected set; }
 
         public override string ToString()
         {
