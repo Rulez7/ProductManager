@@ -1,5 +1,4 @@
-﻿
-namespace ProductManager.Models
+﻿namespace ProductManager.Models
 {
     class Category
     {
