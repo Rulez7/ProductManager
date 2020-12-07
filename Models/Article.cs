@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProductManager.Models
 {
@@ -25,6 +27,8 @@ namespace ProductManager.Models
 
         private string number;
 
+        [Required]
+        [MaxLength(50)]
         public string Number 
         {
             get { return number; }
@@ -42,11 +46,13 @@ namespace ProductManager.Models
 
         private string name;
 
+        [Required]
+        [MaxLength(50)]
         public string Name 
         {
             get { return name; }
 
-            protected set
+            set
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
@@ -59,11 +65,13 @@ namespace ProductManager.Models
 
         private string description;
 
+        [Required]
+        [MaxLength(50)]
         public string Description 
         {
             get { return description; }
 
-            protected set
+            set
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
@@ -74,7 +82,10 @@ namespace ProductManager.Models
             }
         }
 
-        public int Price { get; protected set; }
+        [Required]
+        public int Price { get; set; }
+
+        public ICollection<Category> Categories { get; protected set; } = new List<Category>();
 
         public override string ToString()
         {

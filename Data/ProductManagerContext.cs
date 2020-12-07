@@ -15,5 +15,14 @@ namespace ProductManager.Data
 
             optionsBuilder.UseSqlServer(connectionString);
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Article>().HasIndex(s => s.Name).IsUnique();
+
+            modelBuilder.Entity<Category>().HasIndex(s => s.Name).IsUnique();
+        }
     }
 }

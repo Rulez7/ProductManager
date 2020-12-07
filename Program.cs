@@ -11,8 +11,6 @@ namespace ProductManager
 {
     class Program
     {
-        static string connectionString = "Server=localhost;Database=ProductManager;Integrated Security=True";
-
         static ProductManagerContext Context = new ProductManagerContext();
 
         static List<Article> articleList = Context.Articles.ToList();
@@ -215,23 +213,9 @@ namespace ProductManager
 
         private static void InsertCategoryToCategoryRelation(Category parentCategory, Category childCategory)
         {
-            var sql = $@"
-            UPDATE Categories
-            SET ParentId=@ParentID
-            Where Name=@Name";
+            parentCategory.ChildrenCategories.Add(childCategory);
 
-            SqlConnection connection = new SqlConnection(connectionString);
-
-            SqlCommand command = new SqlCommand(sql, connection);
-
-            command.Parameters.AddWithValue("@ParentId", parentCategory.Id);
-            command.Parameters.AddWithValue("@Name", childCategory.Name);
-
-            connection.Open();
-
-            command.ExecuteNonQuery();
-
-            connection.Close();
+            Context.SaveChanges();
         }
 
         private static void SelectCategoryId()
@@ -393,22 +377,9 @@ namespace ProductManager
 
         private static void InsertProductToCategoryRelation(Category category, Article article)
         {
-            var sql = $@"
-            INSERT INTO CategorizedArticles (CategoryId, ArticleId)
-            VALUES (@CategoryId, @ArticleId)";
+            article.Categories.Add(category);
 
-            SqlConnection connection = new SqlConnection(connectionString);
-
-            SqlCommand command = new SqlCommand(sql, connection);
-
-            command.Parameters.AddWithValue("@CategoryId", category.Id);
-            command.Parameters.AddWithValue("@ArticleId", article.Id);
-
-            connection.Open();
-
-            command.ExecuteNonQuery();
-
-            connection.Close();
+            Context.SaveChanges();
         }
 
         private static void ListCategories()
@@ -707,33 +678,17 @@ namespace ProductManager
             MainMenu();
         }
 
-        private static void EditArticle(Article article)
+        private static void EditArticle(Article articleToEdit)
         {
-            Context.Articles.Attach(article);
+            Article article = Context.Articles.FirstOrDefault(x => x.Number == articleToEdit.Number);
 
-            Context.Entry(article).State = EntityState.Modified;
+            article.Name = articleToEdit.Name;
+
+            article.Description = articleToEdit.Description;
+
+            article.Price = articleToEdit.Price;
 
             Context.SaveChanges();
-
-            //var sql = $@"
-            //    UPDATE Articles
-            //    SET Name=@Name, Description=@Description, Price=@Price
-            //    WHERE Number=@Number";
-
-            //SqlConnection connection = new SqlConnection(connectionString);
-
-            //SqlCommand command = new SqlCommand(sql, connection);
-
-            //command.Parameters.AddWithValue("@Name", article.Name);
-            //command.Parameters.AddWithValue("@Description", article.Description);
-            //command.Parameters.AddWithValue("@Price", article.Price);
-            //command.Parameters.AddWithValue("@Number", article.Number);
-
-            //connection.Open();
-
-            //command.ExecuteNonQuery();
-
-            //connection.Close();
         }
 
         private static void AskForDeleteArticle(Article article)
@@ -780,18 +735,9 @@ namespace ProductManager
 
         private static void DeleteArticle(Article article)
         {
-            var sql = $@"
-                DELETE FROM Articles
-                WHERE Id=(@Id)";
+            Context.Articles.Remove(article);
 
-            SqlConnection connection = new SqlConnection(connectionString);
-            SqlCommand command = new SqlCommand(sql, connection);
-
-            command.Parameters.AddWithValue("@Id", article.Id);
-
-            connection.Open();
-            command.ExecuteNonQuery();
-            connection.Close();
+            Context.SaveChanges();
         }
 
         private static void AddArticle()
