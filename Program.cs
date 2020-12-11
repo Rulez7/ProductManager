@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using ProductManager.Data;
 using ProductManager.Models;
 
@@ -136,21 +134,18 @@ namespace ProductManager
             int selectedParentId;
             int selectedChildId;
 
-            int posX = 2;
+            int posX = 0;
 
             Console.WriteLine("ID  Category                                         Total products");
             Console.WriteLine("-------------------------------------------------------------------");
 
             foreach (Category category in categoryList)
             {
-                Console.SetCursorPosition(0, posX);
-                Console.WriteLine(category.Id);
-                Console.SetCursorPosition(4, posX);
-                Console.WriteLine(category);
+                Console.WriteLine($"{category.Id}   {category.Name,-15}{category.AmountOfProducts,+35}");
                 posX++;
             }
 
-            posX = posX + 1;
+            posX = posX + 3;
 
             Console.WriteLine();
             Console.WriteLine("Parent Category ID: ");
@@ -224,18 +219,12 @@ namespace ProductManager
 
             int selectedCategoryId;
 
-            int posX = 2;
-
             Console.WriteLine("ID  Category                                         Total products");
             Console.WriteLine("-------------------------------------------------------------------");
 
             foreach (Category category in categoryList)
             {
-                Console.SetCursorPosition(0, posX);
-                Console.WriteLine(category.Id);
-                Console.SetCursorPosition(4, posX);
-                Console.WriteLine(category);
-                posX++;
+                Console.WriteLine($"{category.Id}   {category.Name,-15}{category.AmountOfProducts,+35}");
             }
 
             Console.WriteLine();
@@ -389,7 +378,7 @@ namespace ProductManager
 
             foreach (Category category in categoryList)
             {
-                Console.WriteLine(category);
+                Console.WriteLine($"{category.Name,-15}{category.AmountOfProducts,+35}");
             }
 
             ConsoleKeyInfo userInput;
