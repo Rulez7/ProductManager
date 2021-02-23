@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
-namespace ProductManager
+namespace ProductManager.Models
 {
     class Article
     {
@@ -21,15 +23,17 @@ namespace ProductManager
             Price = price;
         }
 
-        public int Id { get; }
+        public int Id { get; protected set; }
 
         private string number;
 
+        [Required]
+        [MaxLength(50)]
         public string Number 
         {
             get { return number; }
 
-            private set
+            protected set
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
@@ -42,11 +46,13 @@ namespace ProductManager
 
         private string name;
 
+        [Required]
+        [MaxLength(50)]
         public string Name 
         {
             get { return name; }
 
-            private set
+            set
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
@@ -59,11 +65,13 @@ namespace ProductManager
 
         private string description;
 
+        [Required]
+        [MaxLength(50)]
         public string Description 
         {
             get { return description; }
 
-            private set
+            set
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
@@ -74,7 +82,10 @@ namespace ProductManager
             }
         }
 
-        public int Price { get; }
+        [Required]
+        public int Price { get; set; }
+
+        public ICollection<Category> Categories { get; protected set; } = new List<Category>();
 
         public override string ToString()
         {
