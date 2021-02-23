@@ -166,6 +166,8 @@ namespace ProductManager
             Category parentCategory = null;
             Category childCategory = null;
 
+            categoryList = Context.Categories.ToList();
+
             foreach (Category category in categoryList)
             {
                 if (selectedParentId == category.Id)
@@ -375,6 +377,8 @@ namespace ProductManager
         {
             Console.WriteLine("Category                                         Total products");
             Console.WriteLine("---------------------------------------------------------------");
+
+            categoryList = Context.Categories.ToList();
 
             foreach (Category category in categoryList)
             {
