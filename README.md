@@ -1,7 +1,11 @@
 # ProductManager
 
+Hämta, redigera, ta bort och lagra produkter genom databas i Microsoft SQL Server Management Studio med hjälp av Entity Framework Core
+
 ## Datalagring Tenta
 
-### C# SQL EntityFrameworkCore
+Tentamensuppgift för kurs i Datalagring
 
-Hämta, redigera, ta bort och lagra produkter genom databas i Microsoft SQL Server Management Studio med hjälp av Entity Framework Core
+## Språk som används
+
+C# SQL EntityFrameworkCore
