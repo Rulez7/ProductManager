@@ -8,4 +8,6 @@ Tentamensuppgift för kurs i Datalagring
 
 ## Språk som används
 
-C# SQL EntityFrameworkCore
+* C# 
+* SQL 
+* EntityFrameworkCore
